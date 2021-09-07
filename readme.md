@@ -1,24 +1,21 @@
-## Guess Matrix绘制
+## Answer-Guess Matrix Code
 
-### 已实现的功能
+This code input the data exported by questionnaire app, calculate the optimal rank of the answers, and output the figure of answer-guess matrix.
 
-- 用状压DP求dag
-- 从多种格式的数据进行读入
-- 以png和pdf格式输出Guess Matrix
+### How to use this code?
 
-### 读入功能
+Use the following instructions to install dependencies
 
-- 问卷星返回的excel文件，处理完选项后复制入txt文件中，放入data目录下
-- 已处理的数据放到data目录中特定目录下
+```
+pip3 install -r requirements.txt
+```
 
-### 未确定的问题
+Move the data to the `input` folder.
 
-- 是否显示刻度条，在对数颜色下效果不好
-- 是否显示横纵轴
-- 是否显示题目名字
-- 是否把文字斜过来
+Run the code
 
-### TODO
+```
+python3 main.py
+```
 
-- 生成latex代码(写了一半，仍有bug)
-- PageRank算法
+The figures will in the `output` folder.

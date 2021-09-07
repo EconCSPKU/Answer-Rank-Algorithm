@@ -7,9 +7,10 @@ perc = 0.03
 split1 = '\t'
 split2 = ','
 outfile = 'output/'
-infile = 'data/'
+infile = 'input/'
 
 def csv_input(filename):
+    print("Input: " + filename)
     # input from csv file
     f = open(infile + filename, 'r')
     filename = filename.split('.')[0]
@@ -57,8 +58,7 @@ def csv_input(filename):
     return ret
 
 def txt_input(filename):
-    print("txt_input")
-    print(filename)
+    print("Input: " + filename)
     if not os.path.exists(outfile + filename):
         os.mkdir(outfile + filename)
     ret = []
@@ -92,15 +92,9 @@ def txt_input(filename):
                 if data[j][0] in dic1:
                     jid = dic1[data[j][0]]
                     guess = data[j][1].split(split2)
-                    tot = 0
                     for k in range(len(guess)):
                         if (guess[k] in dic1) and (guess[k] != data[j][0]):
-                            tot = tot + 1
-                    if ave == 0:
-                        tot = 1
-                    for k in range(len(guess)):
-                        if (guess[k] in dic1) and (guess[k] != data[j][0]):
-                            guessmatrix[jid][dic1[guess[k]]] += 1 / tot
+                            guessmatrix[jid][dic1[guess[k]]] += 1
                     guessmatrix[jid][jid] += 1
             ret.append({
                 'filename': filename,
