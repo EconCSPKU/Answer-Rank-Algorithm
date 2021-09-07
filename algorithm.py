@@ -7,8 +7,11 @@ def optimal_rank(guessmatrix):
     Log = dict()
     for i in range(n):
         Log.update({2 ** i : i})
+    # main algorithm
     for i in range(2 ** n):
+        # enumerate all subsets in a predetermined order
         for j in range(n - 1, -1, -1):
+            # enumerate the first answer in the ranking
             if (i >> j) & 1 == 1:
                 k = i ^ (1 << j)
                 tot = F[k] + guessmatrix[j][j]

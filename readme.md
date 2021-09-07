@@ -1,8 +1,18 @@
-## Answer-Guess Matrix Code
+## Answer Ranking algorithm
 
-This code input the data exported by questionnaire app, calculate the optimal rank of the answers, and output the figure of answer-guess matrix.
+This repository input the data exported by the questionnaire app, calculate the optimal answer rank, and output the figure of answer-guess matrix.
 
-### How to use this code?
+### Our Algorithm
+
+The code of our algorithm is in `algorithm.py`.
+
+### System Requirements
+
+The code is written for Python 3.7 or higher, recent versions of the following python packages must be installed:
+
+Matplotlib
+Numpy
+Pandas
 
 Use the following instructions to install dependencies
 
@@ -10,7 +20,9 @@ Use the following instructions to install dependencies
 pip3 install -r requirements.txt
 ```
 
-Move the data to the `input` folder.
+### Usage
+
+Move the data into the `input` folder.
 
 Run the code
 
@@ -19,3 +31,4 @@ python3 main.py
 ```
 
 The figures will in the `output` folder.
+
