@@ -10,9 +10,9 @@ The code of our algorithm is in `algorithm.py`.
 
 The code is written for Python 3.7 or higher, recent versions of the following python packages must be installed:
 
-Matplotlib
-Numpy
-Pandas
+- Matplotlib
+- Numpy
+- Pandas
 
 Use the following instructions to install dependencies
 
