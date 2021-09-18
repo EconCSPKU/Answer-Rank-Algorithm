@@ -1,7 +1,2 @@
 # python
 *.pyc
-
-# data
-*.txt
-*.png
-*.pdf
