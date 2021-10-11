@@ -10,4 +10,4 @@ if __name__=="__main__":
     data = input.input()
     for questionnaire in data:
         for question in questionnaire:
-            output.print_heatmap(question['filename'], question['id'], question['allans'], question['guessmatrix'])
+            output.print_heatmap(question['filename'], question['id'], question['allans'], question['guessmatrix'], specialname=question['specialname'] if 'specialname' in question else None)

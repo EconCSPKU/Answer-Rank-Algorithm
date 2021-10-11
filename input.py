@@ -13,7 +13,11 @@ def csv_input(filename):
     print("Input: " + filename)
     # input from csv file
     f = open(infile + filename, 'r')
-    filename = filename.split('.')[0]
+    spl = filename.split('.')
+    filename = spl[0]
+    if spl[1] == 'mat':
+        return mat_input(filename, f)
+        
     if not os.path.exists(outfile + filename):
         os.mkdir(outfile + filename)
     lis = f.readlines()
@@ -101,10 +105,26 @@ def txt_input(filename):
                 'questionname': fil,
                 'allans': allans,
                 'guessmatrix': guessmatrix,
+                'specialname': fil.split('.')[0]
             })
     for i in range(len(ret)):
         ret[i].update({'id': i})
     return ret
+
+def mat_input(filename, f):
+    lis = f.readlines()
+    data = []
+    for i in range(len(lis)):
+        data.append(lis[i].rstrip('\n').split(split1))
+    intdata = [list(map(int, data[i][1:])) for i in range(1, len(data))]
+    print(np.array(intdata))
+    return [{
+        'id': 0,
+        'filename': filename,
+        'questionnaire': filename,
+        'allans': data[0][1:],
+        'guessmatrix': np.array(intdata)
+    }]
 
 def input():
     ret = []

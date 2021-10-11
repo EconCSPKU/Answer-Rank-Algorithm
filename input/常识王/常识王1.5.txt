@@ -93,7 +93,7 @@ Chunqiu	ZuoZhuan
 Shiji	无
 Shiji	二十四史
 Chunqiu	ZuoZhuan
-《ZizhiTongjian》	《Shiji》
+ZizhiTongjian	Shiji
 Chunqiu	Shiji
 ZizhiTongjian	ZizhiTongjian
 不知道	不知道
@@ -104,7 +104,7 @@ ZizhiTongjian	不确定所以不填
 ZuoZhuan	ZuoZhuan
 ZuoZhuan	不知道
 ZizhiTongjian	Shiji
-《ZizhiTongjian》	《ZizhiTongjian》,《Shiji》
+ZizhiTongjian	ZizhiTongjian,Shiji
 Shiji	Shiji
 ZizhiTongjian	Shiji
 Chunqiu	ZuoZhuan

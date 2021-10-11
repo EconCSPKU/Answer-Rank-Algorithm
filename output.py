@@ -18,7 +18,7 @@ def init(allans, guessmatrix, order):
             newmatrix[i][j] = guessmatrix[order[i]][order[j]]
     return newans, newmatrix
 
-def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None, figsize = (3.5, 3)):
+def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None, figsize = (3.5, 3), specialname = None):
     """
     Input the answer-guess matrix, output the figure.
 
@@ -31,6 +31,8 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     if order == None:
         order = algorithm.optimal_rank(guessmatrix)
     newans, newmatrix = init(allans, guessmatrix, order)
+    if len(allans) > 10:
+        figsize = (9, 8)
     fig, ax = plt.subplots(figsize = figsize)
     if minmax == None:
         minmax = [newmatrix.min(), newmatrix.max()]
@@ -38,6 +40,11 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     im, cbar = heatmap.heatmap(newmatrix + 1, newans, newans, norm = norm, ax=ax, cmap="Blues", usecbar = False)
     fmt = matplotlib.ticker.FuncFormatter(lambda x, pos: "{:.0f}".format(x - 1))
     texts = heatmap.annotate_heatmap(im, valfmt = fmt, threshold = (sum(minmax) + 1) // 2)
+    ax.set_xlabel("Confidence = %.6f" % (sum(sum(newmatrix[i][i + 1:]) for i in range(len(newmatrix))) / sum(sum(newmatrix))))
     fig.tight_layout()
-    fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".png", bbox_inches='tight', dpi = 400)
-    fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".pdf", bbox_inches='tight')
+    if specialname == None:
+        fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".png", bbox_inches='tight', dpi = 400)
+        fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".pdf", bbox_inches='tight')
+    else:
+        fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
+        fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')

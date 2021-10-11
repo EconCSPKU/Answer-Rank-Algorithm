@@ -32,3 +32,8 @@ python3 main.py
 
 The figures will in the `output` folder.
 
+## Output
+
+Dict:
+
+- "allans": 

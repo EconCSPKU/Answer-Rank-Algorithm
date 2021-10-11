@@ -51,7 +51,8 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_ylabel('Answer', fontsize=11, fontweight='heavy')
     ax.set_title('Guess', fontsize=11, fontweight='heavy')
     # Rotate the tick labels and set their alignment.
-    #plt.setp(ax.get_yticklabels(), rotation=90, ha="right")
+    if data.shape[0] > 3:
+        plt.setp(ax.get_xticklabels(), rotation=330)
 
     # Turn spines off and create white grid.
     for edge, spine in ax.spines.items():
