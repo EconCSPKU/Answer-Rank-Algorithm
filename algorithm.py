@@ -16,9 +16,9 @@ def optimal_rank(M):
             # enumerate the first answer in the ranking
             if (i >> j) & 1 == 1:
                 k = i ^ (1 << j)
-                uppersum = opt_uppersum[k] + M[j][j]
+                uppersum = opt_uppersum[k] + M[j][j] * M[j][j]
                 while k != 0:
-                    uppersum += M[j][Log[k & -k]]
+                    uppersum += M[j][Log[k & -k]] * M[j][Log[k & -k]]
                     k -= k & -k
                 if (uppersum > opt_uppersum[i]) or ((uppersum == opt_uppersum[i]) and (M[j][j] > M[opt_last[i]][opt_last[i]])):
                     opt_uppersum[i] = uppersum
