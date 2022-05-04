@@ -57,7 +57,7 @@ def optimal_rank_with_type(M, tot_type=None):
             for i in range(m, self.n):
                 self.prem[i] = max(self.prem[i - 1], self.cur[i])
             return True
-            
+    M /= sum(sum(M))
     n, n = M.shape
     if n <= 1:
         return [0]
@@ -122,4 +122,4 @@ def optimal_rank_with_type(M, tot_type=None):
             break
     #print(opt)
     #print("-----")
-    return opt
+    return opt, optnorm
