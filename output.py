@@ -30,6 +30,7 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     """
     if order == None:
         order = algorithm.optimal_rank(guessmatrix)
+        algorithm.optimal_rank_with_type(guessmatrix)
     newans, newmatrix = init(allans, guessmatrix, order)
     fig, ax = plt.subplots(figsize = figsize)
     if minmax == None:
