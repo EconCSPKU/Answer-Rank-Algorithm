@@ -53,3 +53,10 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     else:
         fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
         fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
+
+def print_csv(filename, id, allans, guessmatrix):
+    # print([filename, id, allans])
+    res, normtr = algorithm.optimal_rank_with_type(guessmatrix, normalize="tr")
+    res, normall = algorithm.optimal_rank_with_type(guessmatrix, normalize="all")
+    # print([filename, id, res, normtr, normall])
+    return [filename, id, res, normtr, normall]

@@ -31,7 +31,7 @@ def optimal_rank(M):
     
     return order
 
-def optimal_rank_with_type(M, tot_type=None):
+def optimal_rank_with_type(M, tot_type=None, normalize=None):
     
     class enumerator:
         # Enumerator can enumerate all legal categories
@@ -57,10 +57,18 @@ def optimal_rank_with_type(M, tot_type=None):
             for i in range(m, self.n):
                 self.prem[i] = max(self.prem[i - 1], self.cur[i])
             return True
-    M /= sum(sum(M))
+    
+
+    # Normalize
     n, n = M.shape
     if n <= 1:
-        return [0]
+        return [0], 0
+
+    if normalize == "tr":
+        tr = sum([M[i][i] for i in range(n)])
+        M /= tr
+    elif normalize == "all":
+        M /= sum(sum(M))
     # Input answer-guess matrix M
     if tot_type == None:
         tot_type = n
