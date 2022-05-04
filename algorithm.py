@@ -105,7 +105,10 @@ def optimal_rank_with_type(M, tot_type=None):
             W[newcur[i]][i] = math.sqrt(M[i][i] * M[i][i] / typesum[newcur[i]])
         L = np.dot(np.dot(W, M), W.T)
         # Repeat the above process
-
+        
+        for i in range(m):
+            for j in range(i):
+                L[i][j] = 0
         norm = np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
         # Calculate the Frobenius norm
         if norm < optnorm:
@@ -115,6 +118,6 @@ def optimal_rank_with_type(M, tot_type=None):
 
         if not enu.step():
             break
-    print(opt)
-    print("-----")
+    #print(opt)
+    #print("-----")
     return opt

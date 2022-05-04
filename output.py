@@ -30,7 +30,10 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     """
     if order == None:
         order = algorithm.optimal_rank(guessmatrix)
-        algorithm.optimal_rank_with_type(guessmatrix)
+        res = algorithm.optimal_rank_with_type(guessmatrix)
+        if np.max(res) != len(res) - 1:
+            print(guessmatrix)
+            print(res)
     newans, newmatrix = init(allans, guessmatrix, order)
     if len(allans) > 10:
         figsize = (9, 8)

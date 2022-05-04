@@ -6,7 +6,7 @@ import input
 if __name__=="__main__":
     matplotlib.rcParams['pdf.fonttype'] = 42
     matplotlib.rcParams['ps.fonttype'] = 42
-
+    
     data = input.input()
     for questionnaire in data:
         for question in questionnaire:
