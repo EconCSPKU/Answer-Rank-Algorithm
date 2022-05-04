@@ -59,6 +59,8 @@ def optimal_rank_with_type(M, tot_type=None):
             return True
             
     n, n = M.shape
+    if n <= 1:
+        return [0]
     # Input answer-guess matrix M
     if tot_type == None:
         tot_type = n
