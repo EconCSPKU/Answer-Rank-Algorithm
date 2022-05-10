@@ -18,7 +18,7 @@ def init(allans, guessmatrix, order):
             newmatrix[i][j] = guessmatrix[order[i]][order[j]]
     return newans, newmatrix
 
-def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None, figsize = (3.5, 3), specialname = None):
+def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, minmax = None, figsize = (3.5, 3), specialname = None):
     """
     Input the answer-guess matrix, output the figure.
 
@@ -29,12 +29,15 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     order:          the rank of the answers. If order == None, use our algorithm to calculate the optimal rank
     """
     if order == None:
-        order = algorithm.optimal_rank(guessmatrix)
-        res, resnorm = algorithm.optimal_rank_with_type(guessmatrix)
-        if np.max(res) != len(res) - 1:
-            print(guessmatrix)
-            print(res)
-            print(resnorm)
+        order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum)
+        res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, ansnum=ansnum)
+        order2 = algorithm.calc_order(res, ansnum)
+        # print(resnorm, ordernorm)
+        # if order == order2:
+        #     return
+        order = order2
+        ordernorm = resnorm
+        specialname = "Question_" + str(id + 1) + "_new"
     newans, newmatrix = init(allans, guessmatrix, order)
     if len(allans) > 10:
         figsize = (9, 8)
@@ -45,7 +48,7 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
     im, cbar = heatmap.heatmap(newmatrix + 1, newans, newans, norm = norm, ax=ax, cmap="Blues", usecbar = False)
     fmt = matplotlib.ticker.FuncFormatter(lambda x, pos: "{:.0f}".format(x - 1))
     texts = heatmap.annotate_heatmap(im, valfmt = fmt, threshold = (sum(minmax) + 1) // 2)
-    ax.set_xlabel("Confidence = %.6f" % (sum(sum(newmatrix[i][i + 1:]) for i in range(len(newmatrix))) / sum(sum(newmatrix))))
+    ax.set_xlabel("Norm = %.6f" % ordernorm)
     fig.tight_layout()
     if specialname == None:
         fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".png", bbox_inches='tight', dpi = 400)
@@ -54,9 +57,10 @@ def print_heatmap(filename, id, allans, guessmatrix, order = None, minmax = None
         fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
         fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
 
-def print_csv(filename, id, allans, guessmatrix):
+def print_csv(filename, id, allans, guessmatrix, ansnum=[]):
     # print([filename, id, allans])
-    res, normtr = algorithm.optimal_rank_with_type(guessmatrix, normalize="tr")
-    res, normall = algorithm.optimal_rank_with_type(guessmatrix, normalize="all")
+    types, typesnorm = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
+    order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum)
+    # res, normall = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
     # print([filename, id, res, normtr, normall])
-    return [filename, id, res, normtr, normall]
+    return [filename, id, allans, types, algorithm.calc_order(types, ansnum), typesnorm, order, ordernorm]

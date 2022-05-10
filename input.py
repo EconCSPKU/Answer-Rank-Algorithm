@@ -43,19 +43,22 @@ def csv_input(filename):
                 allans.append(key)
                 dic1.update({key : len(allans) - 1})
         guessmatrix = np.zeros([len(allans), len(allans)])
+        ansnum = np.zeros(len(allans))
         for j in range(1, m + 1):
             if data[j][info + i * 2] in dic1:
                 jid = dic1[data[j][info + i * 2]]
                 guess = data[j][info + i * 2 + 1].split(split2)
                 for k in range(len(guess)):
-                    if (guess[k] in dic1) and (guess[k] != data[j][info + i * 2]):
+                    if (guess[k] in dic1):
                         guessmatrix[jid][dic1[guess[k]]] += 1
-                guessmatrix[jid][jid] += 1
+                # guessmatrix[jid][jid] += 1
+                ansnum[jid] += 1
         ret.append({
             'filename': filename,
             'questionname': data[0][info + i * 2],
             'allans': allans,
             'guessmatrix': guessmatrix,
+            'ansnum': ansnum,
         })
     for i in range(len(ret)):
         ret[i].update({'id': i})
@@ -92,19 +95,21 @@ def txt_input(filename):
                     allans.append(key)
                     dic1.update({key : len(allans) - 1})
             guessmatrix = np.zeros([len(allans), len(allans)])
+            ansnum = np.zeros(len(allans))
             for j in range(m):
                 if data[j][0] in dic1:
                     jid = dic1[data[j][0]]
                     guess = data[j][1].split(split2)
                     for k in range(len(guess)):
-                        if (guess[k] in dic1) and (guess[k] != data[j][0]):
+                        if (guess[k] in dic1):
                             guessmatrix[jid][dic1[guess[k]]] += 1
-                    guessmatrix[jid][jid] += 1
+                    ansnum[jid] += 1
             ret.append({
                 'filename': filename,
                 'questionname': fil,
                 'allans': allans,
                 'guessmatrix': guessmatrix,
+                'ansnum': ansnum,
                 'specialname': fil.split('.')[0]
             })
     for i in range(len(ret)):
@@ -117,13 +122,18 @@ def mat_input(filename, f):
     for i in range(len(lis)):
         data.append(lis[i].rstrip('\n').split(split1))
     intdata = [list(map(int, data[i][1:])) for i in range(1, len(data))]
-    print(np.array(intdata))
+    ansnum = np.zeros(len(data[0][1:]))
+    for i in range(len(data[0][1:])):
+        ansnum[i] = intdata[i][i]
+
+    # print(np.array(intdata))
     return [{
         'id': 0,
         'filename': filename,
         'questionnaire': filename,
         'allans': data[0][1:],
-        'guessmatrix': np.array(intdata)
+        'guessmatrix': np.array(intdata),
+        'ansnum': ansnum,
     }]
 
 def input():

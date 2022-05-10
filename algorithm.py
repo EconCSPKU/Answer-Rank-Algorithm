@@ -1,8 +1,11 @@
 import numpy as np
 import math
-def optimal_rank(M):
+
+def optimal_rank(M, ansnum=[]):
     # input answer-guess matrix M
     n, n = M.shape
+    if ansnum == []:
+        ansnum = np.array([M[i][i] for i in range(n)])
     opt_uppersum = np.zeros(2 ** n)
     opt_last = np.zeros(2 ** n, dtype=np.int)
     Log = dict()
@@ -16,11 +19,11 @@ def optimal_rank(M):
             # enumerate the first answer in the ranking
             if (i >> j) & 1 == 1:
                 k = i ^ (1 << j)
-                uppersum = opt_uppersum[k] + M[j][j] * M[j][j]
+                uppersum = opt_uppersum[k] + ansnum[j] * ansnum[j]
                 while k != 0:
                     uppersum += M[j][Log[k & -k]] * M[j][Log[k & -k]]
                     k -= k & -k
-                if (uppersum > opt_uppersum[i]) or ((uppersum == opt_uppersum[i]) and (M[j][j] > M[opt_last[i]][opt_last[i]])):
+                if (uppersum > opt_uppersum[i]) or ((uppersum == opt_uppersum[i]) and (ansnum[j] > ansnum[opt_last[i]])):
                     opt_uppersum[i] = uppersum
                     opt_last[i] = j
     k = 2 ** n - 1
@@ -29,9 +32,37 @@ def optimal_rank(M):
         order.append(opt_last[k])
         k = k ^ (1 << opt_last[k])
     
-    return order
+    return order, calc_norm(M, calc_order(order, ansnum), ansnum)
 
-def optimal_rank_with_type(M, tot_type=None, normalize=None):
+def calc_norm(M, types, ansnum):
+    n = len(types)
+    m = max(types) + 1
+    typesum = np.zeros(m)
+    for i in range(n):
+        typesum[types[i]] += ansnum[i] * ansnum[i]
+    W = np.zeros((m, n))
+    for i in range(n):
+        W[types[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[types[i]])
+    L = np.dot(np.dot(W, M), W.T)
+    for i in range(m):
+        for j in range(i):
+            L[i][j] = 0
+    return np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
+
+def calc_order(types, ansnum):
+    mytypes = np.array(types)
+    n = len(mytypes)
+    res = []
+    for i in range(n):
+        cur = 0
+        for j in range(n):
+            if (mytypes[j] < mytypes[cur]) or ((mytypes[j] == mytypes[cur]) and (ansnum[j] > ansnum[cur])):
+                cur = j
+        mytypes[cur] = n + 1
+        res.append(cur)
+    return res
+
+def optimal_rank_with_type(M, tot_type=None, normalize=None, ansnum=[]):
     
     class enumerator:
         # Enumerator can enumerate all legal categories
@@ -58,16 +89,13 @@ def optimal_rank_with_type(M, tot_type=None, normalize=None):
                 self.prem[i] = max(self.prem[i - 1], self.cur[i])
             return True
     
-
     # Normalize
     n, n = M.shape
     if n <= 1:
         return [0], 0
-
-    if normalize == "tr":
-        tr = sum([M[i][i] for i in range(n)])
-        M /= tr
-    elif normalize == "all":
+    if ansnum == []:
+        ansnum = np.array([M[i][i] for i in range(n)])
+    if normalize == "all":
         M /= sum(sum(M))
     # Input answer-guess matrix M
     if tot_type == None:
@@ -90,36 +118,41 @@ def optimal_rank_with_type(M, tot_type=None, normalize=None):
         typesum = np.zeros(m)
         # Save the sum of squares for each type
         for i in range(n):
-            typesum[cur[i]] += M[i][i] * M[i][i]
+            typesum[cur[i]] += ansnum[i] * ansnum[i]
         W = np.zeros((m, n))
         for i in range(n):
-            W[cur[i]][i] = math.sqrt(M[i][i] * M[i][i] / typesum[cur[i]])
+            W[cur[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[cur[i]])
         # Generate matrix W
         L = np.dot(np.dot(W, M), W.T)
+        typenum = np.zeros(m)
+        for i in range(n):
+            typenum[cur[i]] = max(typenum[cur[i]], ansnum[i])
         # Calculate matrix L
-        order = optimal_rank(L)
+        order, ordernorm = optimal_rank(L, typenum)
         # Get the optimal order of L
         rank = np.zeros(m, dtype=int)
         for i in range(m):
             rank[order[i]] = i
-        
+            
         newcur = []
         for i in range(n):
             newcur.append(rank[cur[i]])
         # Generate new category
-        typesum = np.zeros(m)
-        for i in range(n):
-            typesum[newcur[i]] += M[i][i] * M[i][i]
-        W = np.zeros((m, n))
-        for i in range(n):
-            W[newcur[i]][i] = math.sqrt(M[i][i] * M[i][i] / typesum[newcur[i]])
-        L = np.dot(np.dot(W, M), W.T)
-        # Repeat the above process
+
+        norm = calc_norm(M, newcur, ansnum)
         
-        for i in range(m):
-            for j in range(i):
-                L[i][j] = 0
-        norm = np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
+        # typesum = np.zeros(m)
+        # for i in range(n):
+        #     typesum[newcur[i]] += ansnum[i] * ansnum[i]
+        # W = np.zeros((m, n))
+        # for i in range(n):
+        #     W[newcur[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[newcur[i]])
+        # L = np.dot(np.dot(W, M), W.T)
+        # # Repeat the above process
+        # for i in range(m):
+        #     for j in range(i):
+        #         L[i][j] = 0
+        # norm = np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
         # Calculate the Frobenius norm
         if norm < optnorm:
             # Update optimal answer
