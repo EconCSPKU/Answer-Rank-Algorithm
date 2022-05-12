@@ -1,12 +1,17 @@
 import numpy as np
 import math
 
-def optimal_rank(M, ansnum=[]):
+eps = 1e-9
+
+def optimal_rank(MM, ansnum=[], normalize=None):
     # input answer-guess matrix M
+    M = np.array(MM)
+    if normalize == "all":
+        M /= sum(sum(M))
     n, n = M.shape
     if ansnum == []:
         ansnum = np.array([M[i][i] for i in range(n)])
-    opt_uppersum = np.zeros(2 ** n)
+    opt_uppersum = np.zeros(2 ** n, dtype=float)
     opt_last = np.zeros(2 ** n, dtype=np.int)
     Log = dict()
     for i in range(n):
@@ -19,13 +24,15 @@ def optimal_rank(M, ansnum=[]):
             # enumerate the first answer in the ranking
             if (i >> j) & 1 == 1:
                 k = i ^ (1 << j)
-                uppersum = opt_uppersum[k] + ansnum[j] * ansnum[j]
+                uppersum = opt_uppersum[k]
                 while k != 0:
                     uppersum += M[j][Log[k & -k]] * M[j][Log[k & -k]]
                     k -= k & -k
-                if (uppersum > opt_uppersum[i]) or ((uppersum == opt_uppersum[i]) and (ansnum[j] > ansnum[opt_last[i]])):
+                if (uppersum > opt_uppersum[i] + eps) or ((uppersum > opt_uppersum[i] - eps) and (ansnum[j] > ansnum[opt_last[i]])):
                     opt_uppersum[i] = uppersum
                     opt_last[i] = j
+        if opt_uppersum[i] < 0:
+            opt_uppersum[i] = 0
     k = 2 ** n - 1
     order = []
     while k != 0:
@@ -62,8 +69,7 @@ def calc_order(types, ansnum):
         res.append(cur)
     return res
 
-def optimal_rank_with_type(M, tot_type=None, normalize=None, ansnum=[]):
-    
+def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
     class enumerator:
         # Enumerator can enumerate all legal categories
         def __init__(self, n, cur=None):
@@ -89,12 +95,14 @@ def optimal_rank_with_type(M, tot_type=None, normalize=None, ansnum=[]):
                 self.prem[i] = max(self.prem[i - 1], self.cur[i])
             return True
     
+    M = np.array(MM)
     # Normalize
     n, n = M.shape
     if n <= 1:
         return [0], 0
     if ansnum == []:
         ansnum = np.array([M[i][i] for i in range(n)])
+    # print(M)
     if normalize == "all":
         M /= sum(sum(M))
     # Input answer-guess matrix M

@@ -18,7 +18,7 @@ def init(allans, guessmatrix, order):
             newmatrix[i][j] = guessmatrix[order[i]][order[j]]
     return newans, newmatrix
 
-def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, minmax = None, figsize = (3.5, 3), specialname = None):
+def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, minmax = None, figsize = (3.5, 3), specialname = None, method=None):
     """
     Input the answer-guess matrix, output the figure.
 
@@ -29,15 +29,15 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
     order:          the rank of the answers. If order == None, use our algorithm to calculate the optimal rank
     """
     if order == None:
-        order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum)
-        res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, ansnum=ansnum)
+        order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum, normalize="all")
+        res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, ansnum=ansnum, normalize="all")
         order2 = algorithm.calc_order(res, ansnum)
-        # print(resnorm, ordernorm)
-        # if order == order2:
-        #     return
-        order = order2
-        ordernorm = resnorm
-        specialname = "Question_" + str(id + 1) + "_new"
+        if method==None:
+            order = order2
+            ordernorm = resnorm
+        else:
+            specialname = "Question_" + str(id + 1) + "_" + method
+    print(filename, id, res, order2, order)
     newans, newmatrix = init(allans, guessmatrix, order)
     if len(allans) > 10:
         figsize = (9, 8)
@@ -59,8 +59,10 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
 
 def print_csv(filename, id, allans, guessmatrix, ansnum=[]):
     # print([filename, id, allans])
-    types, typesnorm = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
-    order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum)
+    order, ordernorm = algorithm.optimal_rank(guessmatrix, normalize="all", ansnum=ansnum)
+    res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
+    order2 = algorithm.calc_order(res, ansnum)
     # res, normall = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
     # print([filename, id, res, normtr, normall])
-    return [filename, id, allans, types, algorithm.calc_order(types, ansnum), typesnorm, order, ordernorm]
+    print(filename, id, res, order2, order)
+    return [filename, id, allans, res, order2, resnorm, order, ordernorm]
