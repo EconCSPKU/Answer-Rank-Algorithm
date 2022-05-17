@@ -28,11 +28,12 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
     guessmatrix:    the answer-guess matrix M
     order:          the rank of the answers. If order == None, use our algorithm to calculate the optimal rank
     """
+    print("Heatmap:", filename, id, method)
     if order == None:
-        order, ordernorm = algorithm.optimal_rank(guessmatrix, ansnum=ansnum, normalize="all")
-        res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, ansnum=ansnum, normalize="all")
+        order, ordernorm = algorithm.answer_rank_default(guessmatrix, ansnum=ansnum, normalize="all")
+        res, resnorm = algorithm.answer_rank_variant(guessmatrix, ansnum=ansnum, normalize="all")
         order2 = algorithm.calc_order(res, ansnum)
-        if method==None:
+        if method=="variant":
             order = order2
             ordernorm = resnorm
         else:
@@ -57,7 +58,8 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
         fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
 
 def print_csv(filename, id, allans, guessmatrix, ansnum=[]):
-    order, ordernorm = algorithm.optimal_rank(guessmatrix, normalize="all", ansnum=ansnum)
-    res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
+    print("Csv:", filename, id)
+    order, ordernorm = algorithm.answer_rank_default(guessmatrix, normalize="all", ansnum=ansnum)
+    res, resnorm = algorithm.answer_rank_variant(guessmatrix, normalize="all", ansnum=ansnum)
     order2 = algorithm.calc_order(res, ansnum)
     return [filename, id, allans, res, order2, resnorm, order, ordernorm]

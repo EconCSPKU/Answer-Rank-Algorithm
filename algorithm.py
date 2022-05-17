@@ -33,7 +33,7 @@ def calc_order(types, ansnum):
         res.append(cur)
     return res
 
-def optimal_rank(MM, ansnum=[], normalize=None):
+def answer_rank_default(MM, ansnum=[], normalize=None):
     # input answer-guess matrix M
     M = np.array(MM)
     if normalize == "all":
@@ -71,7 +71,7 @@ def optimal_rank(MM, ansnum=[], normalize=None):
     
     return order, calc_norm(M, calc_order(order, ansnum), ansnum)
 
-def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
+def answer_rank_variant(MM, tot_type=None, normalize=None, ansnum=[]):
     class enumerator:
         # Enumerator can enumerate all legal categories
         def __init__(self, n, cur=None):
@@ -138,7 +138,7 @@ def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
         for i in range(n):
             typenum[cur[i]] = max(typenum[cur[i]], ansnum[i])
         # Calculate matrix L
-        order, ordernorm = optimal_rank(L, typenum)
+        order, ordernorm = answer_rank_default(L, typenum)
         # Get the optimal order of L
         rank = np.zeros(m, dtype=int)
         for i in range(m):

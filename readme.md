@@ -22,8 +22,6 @@ pip3 install -r requirements.txt
 
 ## Usage
 
-Move the data into the `input` folder.
-
 Run the code
 
 ```
@@ -31,9 +29,3 @@ python3 main.py
 ```
 
 The figures will in the `output` folder.
-
-## Output
-
-Dict:
-
-- "allans": 
