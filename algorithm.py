@@ -3,6 +3,36 @@ import math
 
 eps = 1e-9
 
+def calc_norm(M, types, ansnum):
+    # calculate the frobenius norm when the partition is types
+    n = len(types)
+    m = max(types) + 1
+    typesum = np.zeros(m)
+    for i in range(n):
+        typesum[types[i]] += ansnum[i] * ansnum[i]
+    W = np.zeros((m, n))
+    for i in range(n):
+        W[types[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[types[i]])
+    L = np.dot(np.dot(W, M), W.T)
+    for i in range(m):
+        for j in range(i):
+            L[i][j] = 0
+    return np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
+
+def calc_order(types, ansnum):
+    # trans the partition to optimal order
+    mytypes = np.array(types)
+    n = len(mytypes)
+    res = []
+    for i in range(n):
+        cur = 0
+        for j in range(n):
+            if (mytypes[j] < mytypes[cur]) or ((mytypes[j] == mytypes[cur]) and (ansnum[j] > ansnum[cur])):
+                cur = j
+        mytypes[cur] = n + 1
+        res.append(cur)
+    return res
+
 def optimal_rank(MM, ansnum=[], normalize=None):
     # input answer-guess matrix M
     M = np.array(MM)
@@ -41,34 +71,6 @@ def optimal_rank(MM, ansnum=[], normalize=None):
     
     return order, calc_norm(M, calc_order(order, ansnum), ansnum)
 
-def calc_norm(M, types, ansnum):
-    n = len(types)
-    m = max(types) + 1
-    typesum = np.zeros(m)
-    for i in range(n):
-        typesum[types[i]] += ansnum[i] * ansnum[i]
-    W = np.zeros((m, n))
-    for i in range(n):
-        W[types[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[types[i]])
-    L = np.dot(np.dot(W, M), W.T)
-    for i in range(m):
-        for j in range(i):
-            L[i][j] = 0
-    return np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
-
-def calc_order(types, ansnum):
-    mytypes = np.array(types)
-    n = len(mytypes)
-    res = []
-    for i in range(n):
-        cur = 0
-        for j in range(n):
-            if (mytypes[j] < mytypes[cur]) or ((mytypes[j] == mytypes[cur]) and (ansnum[j] > ansnum[cur])):
-                cur = j
-        mytypes[cur] = n + 1
-        res.append(cur)
-    return res
-
 def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
     class enumerator:
         # Enumerator can enumerate all legal categories
@@ -102,7 +104,7 @@ def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
         return [0], 0
     if ansnum == []:
         ansnum = np.array([M[i][i] for i in range(n)])
-    # print(M)
+
     if normalize == "all":
         M /= sum(sum(M))
     # Input answer-guess matrix M
@@ -148,20 +150,6 @@ def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
         # Generate new category
 
         norm = calc_norm(M, newcur, ansnum)
-        
-        # typesum = np.zeros(m)
-        # for i in range(n):
-        #     typesum[newcur[i]] += ansnum[i] * ansnum[i]
-        # W = np.zeros((m, n))
-        # for i in range(n):
-        #     W[newcur[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[newcur[i]])
-        # L = np.dot(np.dot(W, M), W.T)
-        # # Repeat the above process
-        # for i in range(m):
-        #     for j in range(i):
-        #         L[i][j] = 0
-        # norm = np.linalg.norm(M - np.dot(np.dot(W.T, L), W), "fro")
-        # Calculate the Frobenius norm
         if norm < optnorm:
             # Update optimal answer
             optnorm = norm
@@ -169,6 +157,5 @@ def optimal_rank_with_type(MM, tot_type=None, normalize=None, ansnum=[]):
 
         if not enu.step():
             break
-    #print(opt)
-    #print("-----")
+
     return opt, optnorm

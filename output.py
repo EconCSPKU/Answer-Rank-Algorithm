@@ -37,7 +37,6 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
             ordernorm = resnorm
         else:
             specialname = "Question_" + str(id + 1) + "_" + method
-    print(filename, id, res, order2, order)
     newans, newmatrix = init(allans, guessmatrix, order)
     if len(allans) > 10:
         figsize = (9, 8)
@@ -58,11 +57,7 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
         fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
 
 def print_csv(filename, id, allans, guessmatrix, ansnum=[]):
-    # print([filename, id, allans])
     order, ordernorm = algorithm.optimal_rank(guessmatrix, normalize="all", ansnum=ansnum)
     res, resnorm = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
     order2 = algorithm.calc_order(res, ansnum)
-    # res, normall = algorithm.optimal_rank_with_type(guessmatrix, normalize="all", ansnum=ansnum)
-    # print([filename, id, res, normtr, normall])
-    print(filename, id, res, order2, order)
     return [filename, id, allans, res, order2, resnorm, order, ordernorm]
