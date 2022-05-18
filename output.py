@@ -36,8 +36,10 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
         if method=="variant":
             order = order2
             ordernorm = resnorm
-        else:
-            specialname = "Question_" + str(id + 1) + "_" + method
+    if specialname != None:
+        specialname += "_" + method
+    else:
+        specialname = "Question_" + str(id + 1) + "_" + method
     newans, newmatrix = init(allans, guessmatrix, order)
     if len(allans) > 10:
         figsize = (9, 8)
@@ -50,12 +52,8 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
     texts = heatmap.annotate_heatmap(im, valfmt = fmt, threshold = (sum(minmax) + 1) // 2)
     ax.set_xlabel("Norm = %.6f" % ordernorm)
     fig.tight_layout()
-    if specialname == None:
-        fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".png", bbox_inches='tight', dpi = 400)
-        fig.savefig('output/' + filename + "/Question_" + str(id + 1) + ".pdf", bbox_inches='tight')
-    else:
-        fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
-        fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
+    fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
+    fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')
 
 def print_csv(filename, id, allans, guessmatrix, ansnum=[]):
     print("Csv:", filename, id)
