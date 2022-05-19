@@ -2,6 +2,10 @@
 
 This repository input the data exported by the questionnaire app, calculate the optimal answer rank, and output the figure of answer-guess matrix.
 
+## Our Data
+
+Our data is in the `input` folder
+
 ## Our Algorithm
 
 The code of our algorithm is in `algorithm.py`.
