@@ -5,7 +5,7 @@ import heatmap
 import algorithm
 
 
-def init(allans, guessmatrix, order):
+def init(allans, guessmatrix, order, ansnum=[]):
     """
     Rearrange the answer-guess matrix
     """
@@ -16,6 +16,8 @@ def init(allans, guessmatrix, order):
         newans.append(allans[order[i]])
         for j in range(n):
             newmatrix[i][j] = guessmatrix[order[i]][order[j]]
+        if ansnum != []:
+            newmatrix[i][i] = ansnum[order[i]]
     return newans, newmatrix
 
 def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, minmax = None, figsize = (3.5, 3), specialname = None, method=None):
@@ -36,11 +38,12 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
         if method=="variant":
             order = order2
             ordernorm = resnorm
-    if specialname != None:
-        specialname += "_" + method
     else:
-        specialname = "Question_" + str(id + 1) + "_" + method
-    newans, newmatrix = init(allans, guessmatrix, order)
+        ordernorm = algorithm.calc_norm(guessmatrix, order, ansnum)
+    if specialname == None:
+        specialname = "Question_" + str(id + 1)
+    specialname += "_" + method
+    newans, newmatrix = init(allans, guessmatrix, order, ansnum)
     if len(allans) > 10:
         figsize = (9, 8)
     fig, ax = plt.subplots(figsize = figsize)
@@ -50,7 +53,7 @@ def print_heatmap(filename, id, allans, guessmatrix, ansnum=[], order = None, mi
     im, cbar = heatmap.heatmap(newmatrix + 1, newans, newans, norm = norm, ax=ax, cmap="Blues", usecbar = False)
     fmt = matplotlib.ticker.FuncFormatter(lambda x, pos: "{:.0f}".format(x - 1))
     texts = heatmap.annotate_heatmap(im, valfmt = fmt, threshold = (sum(minmax) + 1) // 2)
-    ax.set_xlabel("Norm = %.6f" % ordernorm)
+    # ax.set_xlabel("lack-of-fit = %.6f" % ordernorm)
     fig.tight_layout()
     fig.savefig('output/' + filename + "/" + specialname + ".png", bbox_inches='tight', dpi = 400)
     fig.savefig('output/' + filename + "/" + specialname + ".pdf", bbox_inches='tight')

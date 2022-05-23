@@ -49,9 +49,9 @@ def heatmap(data, row_labels, col_labels, ax=None,
     # Let the horizontal axes labeling appear on top.
     ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
     ax.set_ylabel('Answer', fontsize=11, fontweight='heavy')
-    ax.set_title('Guess', fontsize=11, fontweight='heavy')
+    ax.set_title('Prediction', fontsize=11, fontweight='heavy')
     # Rotate the tick labels and set their alignment.
-    if data.shape[0] > 3:
+    if data.shape[0] > 6:
         plt.setp(ax.get_xticklabels(), rotation=330)
 
     # Turn spines off and create white grid.
