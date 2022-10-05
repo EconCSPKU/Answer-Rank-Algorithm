@@ -1,6 +1,6 @@
 # Answer Ranking algorithm
 
-This repository input the data exported by the questionnaire app, calculate the optimal answer rank, and output the figure of answer-guess matrix.
+This repository input the data exported by the questionnaire app, calculate the optimal answer rank, and output the figure of the answer-prediction matrix.
 
 ## Our Data
 
@@ -32,4 +32,6 @@ Run the code
 python3 main.py
 ```
 
-The figures will in the `output` folder.
+The results will in `output.csv`
+
+The figure of the answer-prediction matrix will in the `output` folder.
