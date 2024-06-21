@@ -9,10 +9,10 @@ def calc_norm(M, types, ansnum):
     m = max(types) + 1
     typesum = np.zeros(m)
     for i in range(n):
-        typesum[types[i]] += ansnum[i] * ansnum[i]
+        typesum[types[i]] += ansnum[i]
     W = np.zeros((m, n))
     for i in range(n):
-        W[types[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[types[i]])
+        W[types[i]][i] = math.sqrt(ansnum[i] / typesum[types[i]])
     L = np.dot(np.dot(W, M), W.T)
     for i in range(m):
         for j in range(i):
@@ -42,7 +42,7 @@ def answer_rank_default(MM, ansnum=[], normalize=None):
     if ansnum == []:
         ansnum = np.array([M[i][i] for i in range(n)])
     opt_uppersum = np.zeros(2 ** n, dtype=float)
-    opt_last = np.zeros(2 ** n, dtype=np.int)
+    opt_last = np.zeros(2 ** n, dtype=int)
     Log = dict()
     for i in range(n):
         Log.update({2 ** i : i})
@@ -69,6 +69,7 @@ def answer_rank_default(MM, ansnum=[], normalize=None):
         order.append(opt_last[k])
         k = k ^ (1 << opt_last[k])
     
+    # print(order)
     return order, calc_norm(M, calc_order(order, ansnum), ansnum)
 
 def answer_rank_variant(MM, tot_type=None, normalize=None, ansnum=[]):
@@ -128,10 +129,11 @@ def answer_rank_variant(MM, tot_type=None, normalize=None, ansnum=[]):
         typesum = np.zeros(m)
         # Save the sum of squares for each type
         for i in range(n):
-            typesum[cur[i]] += ansnum[i] * ansnum[i]
+            typesum[cur[i]] += ansnum[i]
         W = np.zeros((m, n))
         for i in range(n):
-            W[cur[i]][i] = math.sqrt(ansnum[i] * ansnum[i] / typesum[cur[i]])
+            W[cur[i]][i] = math.sqrt(ansnum[i] / typesum[cur[i]])
+        # print(W)
         # Generate matrix W
         L = np.dot(np.dot(W, M), W.T)
         typenum = np.zeros(m)
@@ -150,12 +152,20 @@ def answer_rank_variant(MM, tot_type=None, normalize=None, ansnum=[]):
         # Generate new category
 
         norm = calc_norm(M, newcur, ansnum)
+        # print(W)
+        # print(L)
+        # print(norm)
+        # print("-----------------------")
         if norm < optnorm:
             # Update optimal answer
             optnorm = norm
             opt = newcur
+            optW = W
+            optL = L
 
         if not enu.step():
             break
-
+    # print(optW)
+    # print(optL)
+    # print(np.dot(np.dot(optW.T, optL), optW))
     return opt, optnorm

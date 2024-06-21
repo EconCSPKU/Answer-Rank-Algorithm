@@ -3,7 +3,9 @@ import matplotlib
 import output
 import input
 import pandas as pd
+import numpy as np
 import os
+from algorithm import answer_rank_variant
 
 if __name__=="__main__":
     matplotlib.rcParams['pdf.fonttype'] = 42
